@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XFOR TEAM - Players</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3333;
+      --secondary-color: #1a1a1a;
+      --bg-color: #0a0a0a;
+      --text-color: #f4f4f4;
+      --accent-color: #ff5555;
+      --card-bg: #1c1c1c;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Animation de fond */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.1) 0%, transparent 25%),
+        radial-gradient(circle at 80% 70%, rgba(255, 0, 0, 0.1) 0%, transparent 25%);
+      z-index: -1;
+      animation: pulse 15s infinite alternate;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.7; }
+    }
+    
+    header {
+      background: radial-gradient(circle at center, #ff0000 0%, #000000 100%);
+      text-align: center;
+      padding: 120px 20px 80px;
+      position: relative;
+      overflow: hidden;
+      animation: headerGlow 3s infinite alternate;
+    }
+    
+    @keyframes headerGlow {
+      from { box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
+      to { box-shadow: 0 0 50px rgba(255, 0, 0, 0.7); }
+    }
+    
+    header h1 {
+      font-size: 4rem;
+      margin: 0;
+      text-shadow: 0 0 15px #ff0000, 0 0 30px #000;
+      animation: textGlow 2s infinite alternate;
+    }
+    
+    @keyframes textGlow {
+      from { text-shadow: 0 0 10px #ff0000, 0 0 20px #000; }
+      to { text-shadow: 0 0 20px #ff0000, 0 0 40px #000, 0 0 60px #ff3333; }
+    }
+    
+    .players {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .players h2 {
+      color: var(--primary-color);
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .players h2::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+      animation: underline 3s infinite;
+    }
+    
+    @keyframes underline {
+      0% { transform: scaleX(0); }
+      50% { transform: scaleX(1); }
+      100% { transform: scaleX(0); }
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      border: 2px solid var(--primary-color);
+      border-radius: 8px;
+      padding: 8px 15px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+      background-color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 51, 51, 0.4);
+    }
+    
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 25px;
+    }
+    
+    .player-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--primary-color);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: cardAppear 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    
+    @keyframes cardAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .player-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
+    }
+    
+    .player-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(255, 51, 51, 0.3);
+    }
+    
+    .player-card:hover::before {
+      left: 100%;
+    }
+    
+    .player-name {
+      color: var(--primary-color);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: block;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .player-name:hover {
+      color: var(--accent-color);
+      text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+    }
+    
+    .player-info {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .player-info p {
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .player-info span:first-child {
+      color: #aaa;
+    }
+    
+    .player-info span:last-child {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+    
+    .device-icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+    
+    /* Effet de particules */
+    .particle {
+      position: absolute;
+      background-color: rgba(255, 51, 51, 0.3);
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .players h2 {
+        font-size: 2rem;
+      }
+      
+      .player-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  
+  <header>
+    <h1>XFOR TEAM</h1>
+  </header>
+
+  <section class="players">
+    <h2>Our Players</h2>
+    
+    <div class="controls">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="PC">PC Players</button>
+      <button class="filter-btn" data-filter="Taliphoun">Mobile Players</button>
+      <button class="filter-btn" data-filter="high-level">High Level (80+)</button>
+    </div>
+    
+    <div class="player-grid" id="playerGrid"></div>
+  </section>
+
+  <script>
+    const players = [
+      { name: "XFOR", id: "247235698", level: 83, device: "PC", profile: "profile_xfor.html" },
+      { name: "RTX", id: "3073363895", level: 62, device: "PC", profile: "profile_rtx.html" },
+      { name: "SPOOLA", id: "18371795", level: 86, device: "Taliphoun", profile: "profile_spoola.html" },
+      { name: "HADOUDI shop", id: "99530327", level: 85, device: "PC" },
+      { name: "SBL", id: "99530327", level: 64, device: "PC" },
+      { name: "JINIX", id: "9410859839", level: 61, device: "Taliphoun" },
+      { name: "ROMEOO", id: "1833330704", level: 67, device: "Taliphoun" },
+      { name: "PANDA", id: "1215503602", level: 69, device: "PC" },
+      { name: "QARTAGI", id: "532792133", level: 70, device: "Taliphoun" },
+      { name: "MO5LES", id: "404084950", level: 85, device: "Taliphoun" },
+      { name: "LOAY", id: "100502676", level: 80, device: "Taliphoun" },
+      { name: "INAYAXAN4SS", id: "113385504", level: 80, device: "Taliphoun" },
+      { name: "ELSO", id: "130492587", level: 78, device: "Taliphoun" },
+      { name: "TOUTA", id: "153241253", level: 68, device: "Taliphoun" },
+      { name: "DOOM", id: "163118061", level: 76, device: "PC" },
+      { name: "BASSEM", id: "165347110", level: 77, device: "PC" },
+      { name: "SHADOW", id: "182738820", level: 76, device: "Taliphoun" },
+      { name: "MOKHTAR", id: "209584090", level: 79, device: "Taliphoun" },
+      { name: "MOTHANA", id: "235092963", level: 72, device: "Taliphoun" },
+      { name: "BNZARTI", id: "423630308", level: 79, device: "Taliphoun" },
+      { name: "SUPRAA", id: "428204569", level: 78, device: "PC" },
+      { name: "RELAX", id: "504147704", level: 74, device: "Taliphoun" },
+      { name: "KIRA", id: "532931316", level: 74, device: "Taliphoun" },
+      { name: "TAKI", id: "548339211", level: 73, device: "PC" },
+      { name: "LWESS", id: "562676378", level: 77, device: "Taliphoun" },
+      { name: "HARBESH", id: "575661228", level: 77, device: "Taliphoun" },
+      { name: "TWIX", id: "584422062", level: 70, device: "Taliphoun" },
+      { name: "HUSHI", id: "644001183", level: 73, device: "Taliphoun" },
+      { name: "HAMZA", id: "646941037", level: 77, device: "Taliphoun" },
+      { name: "SNOOPY", id: "700301778", level: 82, device: "PC" },
+      { name: "9SF", id: "737004094", level: 82, device: "Taliphoun" },
+      { name: "RAMZZY", id: "817658345", level: 82, device: "Taliphoun" },
+      { name: "HELEX", id: "858683674", level: 74, device: "Taliphoun" },
+      { name: "R3DD", id: "897682540", level: 69, device: "PC" },
+      { name: "QUEEN", id: "897930838", level: 83, device: "Taliphoun" },
+      { name: "ITASHI", id: "980980278", level: 73, device: "PC" },
+      { name: "HRX", id: "1043530509", level: 78, device: "PC" },
+      { name: "YONA", id: "1261638873", level: 74, device: "Taliphoun" },
+      { name: "7ARBOUCH", id: "1566013148", level: 79, device: "Taliphoun" },
+      { name: "GANOUCH", id: "1902142283", level: 75, device: "Taliphoun" },
+      { name: "YARA", id: "2349870037", level: 75, device: "Taliphoun" },
+      { name: "TAKI", id: "2889938614", level: 65, device: "PC" },
+      { name: "CHAWIA", id: "2964258330", level: 78, device: "Taliphoun" },
+      { name: "صعيدي", id: "1956092625", level: 84, device: "Taliphoun" },
+      { name: "الزنجي", id: "7117787797", level: 75, device: "Taliphoun" },
+      { name: "معذبكم", id: "647212041", level: 83, device: "Taliphoun" },
+      { name: "موزان", id: "314747841", level: 65, device: "PC" },
+      { name: "اسامة 3kd", id: "335776594", level: 86, device: "PC" },
+      { name: "ملك البيك", id: "396544373", level: 81, device: "Taliphoun" },
+      { name: "سوفي", id: "699893334", level: 77, device: "Taliphoun" },
+      { name: "هلا يا رمانه", id: "1372585796", level: 74, device: "Taliphoun" },
+      { name: "لطشا", id: "1568284555", level: 71, device: "Taliphoun" }
+    ];
+
+    // Création des particules
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Position aléatoire
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100 + 100;
+        
+        // Taille aléatoire
+        const size = Math.random() * 4 + 1;
+        
+        // Durée d'animation aléatoire
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        
+        particle.style.left = `${posX}%`;
+        particle.style.top = `${posY}%`;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // Afficher les joueurs
+    function displayPlayers(filter = 'all') {
+      const container = document.getElementById('playerGrid');
+      container.innerHTML = '';
+      
+      let filteredPlayers = players;
+      
+      if (filter === 'PC') {
+        filteredPlayers = players.filter(p => p.device === 'PC');
+      } else if (filter === 'Taliphoun') {
+        filteredPlayers = players.filter(p => p.device === 'Taliphoun');
+      } else if (filter === 'high-level') {
+        filteredPlayers = players.filter(p => p.level >= 80);
+      }
+      
+      filteredPlayers.forEach((player, index) => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.style.animationDelay = `${index * 0.05}s`;
+        
+        const deviceIcon = player.device === 'PC' ? '💻' : '📱';
+        
+        card.innerHTML = `
+          <a href="${player.profile || '#'}" class="player-name">${player.name}</a>
+          <div class="player-info">
+            <p><span>ID:</span> <span>${player.id}</span></p>
+            <p><span>Level:</span> <span>${player.level}</span></p>
+            <p><span>Device:</span> <span>${player.device} ${deviceIcon}</span></p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      displayPlayers();
+      
+      // Filtres
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          displayPlayers(btn.dataset.filter);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

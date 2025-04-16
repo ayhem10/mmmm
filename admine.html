@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XFOR ADMIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3333;
+      --secondary-color: #1a1a1a;
+      --bg-color: #0a0a0a;
+      --text-color: #f4f4f4;
+      --accent-color: #ff5555;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Animation de fond */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.1) 0%, transparent 25%),
+        radial-gradient(circle at 80% 70%, rgba(255, 0, 0, 0.1) 0%, transparent 25%);
+      z-index: -1;
+      animation: pulse 15s infinite alternate;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.7; }
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px 0;
+      position: relative;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      font-size: 3rem;
+      text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+      margin-bottom: 10px;
+      animation: textGlow 2s infinite alternate;
+    }
+    
+    @keyframes textGlow {
+      from { text-shadow: 0 0 10px var(--primary-color); }
+      to { text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--accent-color); }
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      border: 2px solid var(--primary-color);
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 51, 51, 0.4);
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn-danger {
+      background-color: #ff3333;
+      border-color: #ff0000;
+    }
+    
+    .btn-danger:hover {
+      background-color: #ff0000;
+    }
+    
+    .message-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .message {
+      background-color: var(--secondary-color);
+      border-left: 6px solid var(--primary-color);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .message:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 25px rgba(255, 0, 0, 0.2);
+    }
+    
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .message-id {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    
+    .message-date {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+    
+    .message-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .message-content p {
+      margin: 5px 0;
+    }
+    
+    .message strong {
+      color: var(--primary-color);
+      display: inline-block;
+      min-width: 80px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #777;
+      font-size: 1.2rem;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Effet de particules */
+    .particle {
+      position: absolute;
+      background-color: rgba(255, 51, 51, 0.3);
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .message-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>XFOR ADMIN PANEL</h1>
+    <p>Gestion des demandes d'adhésion</p>
+  </header>
+
+  <div class="controls">
+    <button class="btn" id="refreshBtn">Actualiser</button>
+    <button class="btn btn-danger" id="clearBtn">Tout supprimer</button>
+    <button class="btn" id="exportBtn">Exporter en JSON</button>
+  </div>
+
+  <div class="message-container" id="messages"></div>
+
+  <script>
+    // Fonction pour créer des particules
+    function createParticles() {
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Position aléatoire
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100 + 100;
+        
+        // Taille aléatoire
+        const size = Math.random() * 4 + 1;
+        
+        // Durée d'animation aléatoire
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        
+        particle.style.left = `${posX}%`;
+        particle.style.top = `${posY}%`;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        document.body.appendChild(particle);
+      }
+    }
+    
+    // Fonction pour afficher les messages
+    function displayMessages() {
+      const messages = JSON.parse(localStorage.getItem('xfor_requests')) || [];
+      const container = document.getElementById('messages');
+      container.innerHTML = '';
+      
+      if (messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">Aucune demande pour le moment.</div>';
+      } else {
+        messages.forEach((msg, index) => {
+          const div = document.createElement('div');
+          div.className = 'message';
+          div.style.animationDelay = `${index * 0.1}s`;
+          
+          // Ajouter la date si elle n'existe pas (pour la rétrocompatibilité)
+          if (!msg.date) {
+            msg.date = new Date().toLocaleString();
+          }
+          
+          div.innerHTML = `
+            <div class="message-header">
+              <span class="message-id">Demande #${index + 1}</span>
+              <span class="message-date">${msg.date}</span>
+            </div>
+            <div class="message-content">
+              <p><strong>Nom:</strong> ${msg.name}</p>
+              <p><strong>ID:</strong> ${msg.id}</p>
+              <p><strong>Level:</strong> ${msg.level}</p>
+              <p><strong>Device:</strong> ${msg.device}</p>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+    }
+    
+    // Fonction pour exporter les données en JSON
+    function exportToJson() {
+      const messages = JSON.parse(localStorage.getItem('xfor_requests')) || [];
+      if (messages.length === 0) {
+        alert("Aucune donnée à exporter !");
+        return;
+      }
+      
+      const dataStr = JSON.stringify(messages, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `xfor_requests_${new Date().toISOString().slice(0,10)}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    }
+    
+    // Fonction pour supprimer toutes les demandes
+    function clearAllRequests() {
+      if (confirm("Êtes-vous sûr de vouloir supprimer toutes les demandes ? Cette action est irréversible.")) {
+        localStorage.removeItem('xfor_requests');
+        displayMessages();
+      }
+    }
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+      displayMessages();
+      createParticles();
+      
+      // Écouteurs d'événements
+      document.getElementById('refreshBtn').addEventListener('click', displayMessages);
+      document.getElementById('clearBtn').addEventListener('click', clearAllRequests);
+      document.getElementById('exportBtn').addEventListener('click', exportToJson);
+    });
+  </script>
+</body>
+</html>
