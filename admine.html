@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XFOR ADMIN</title>
+  <title>XFOR TEAM - Players</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -12,6 +12,7 @@
       --bg-color: #0a0a0a;
       --text-color: #f4f4f4;
       --accent-color: #ff5555;
+      --card-bg: #1c1c1c;
     }
     
     * {
@@ -24,13 +25,11 @@
       font-family: 'Orbitron', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
-      padding: 20px;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
     }
     
-    /* Animation de fond */
     body::before {
       content: "";
       position: fixed;
@@ -51,23 +50,70 @@
     }
     
     header {
+      background: radial-gradient(circle at center, #ff0000 0%, #000000 100%);
       text-align: center;
-      margin-bottom: 40px;
-      padding: 20px 0;
+      padding: 120px 20px 80px;
       position: relative;
+      overflow: hidden;
+      animation: headerGlow 3s infinite alternate;
     }
     
-    h1 {
-      color: var(--primary-color);
-      font-size: 3rem;
-      text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
-      margin-bottom: 10px;
+    @keyframes headerGlow {
+      from { box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
+      to { box-shadow: 0 0 50px rgba(255, 0, 0, 0.7); }
+    }
+    
+    header h1 {
+      font-size: 4rem;
+      margin: 0;
+      text-shadow: 0 0 15px #ff0000, 0 0 30px #000;
       animation: textGlow 2s infinite alternate;
     }
     
     @keyframes textGlow {
-      from { text-shadow: 0 0 10px var(--primary-color); }
-      to { text-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--accent-color); }
+      from { text-shadow: 0 0 10px #ff0000, 0 0 20px #000; }
+      to { text-shadow: 0 0 20px #ff0000, 0 0 40px #000, 0 0 60px #ff3333; }
+    }
+    
+    .players {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .players h2 {
+      color: var(--primary-color);
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .players h2::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+      animation: underline 3s infinite;
+    }
+    
+    @keyframes underline {
+      0% { transform: scaleX(0); }
+      50% { transform: scaleX(1); }
+      100% { transform: scaleX(0); }
     }
     
     .controls {
@@ -78,21 +124,52 @@
       flex-wrap: wrap;
     }
     
-    .btn {
+    .filter-btn {
       background-color: var(--secondary-color);
       color: var(--text-color);
       border: 2px solid var(--primary-color);
       border-radius: 8px;
-      padding: 10px 20px;
+      padding: 8px 15px;
       font-family: 'Orbitron', sans-serif;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
     }
     
-    .btn::before {
+    .filter-btn:hover, .filter-btn.active {
+      background-color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 51, 51, 0.4);
+    }
+    
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 25px;
+    }
+    
+    .player-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--primary-color);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: cardAppear 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    
+    @keyframes cardAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .player-card::before {
       content: "";
       position: absolute;
       top: 0;
@@ -103,104 +180,268 @@
       transition: 0.5s;
     }
     
-    .btn:hover {
-      background-color: var(--primary-color);
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(255, 51, 51, 0.4);
+    .player-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(255, 51, 51, 0.3);
     }
     
-    .btn:hover::before {
+    .player-card:hover::before {
       left: 100%;
     }
     
-    .btn-danger {
-      background-color: #ff3333;
-      border-color: #ff0000;
+    .player-name {
+      color: var(--primary-color);
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: block;
+      text-decoration: none;
+      transition: color 0.3s;
     }
     
-    .btn-danger:hover {
-      background-color: #ff0000;
+    .player-name:hover {
+      color: var(--accent-color);
+      text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
     }
     
-    .message-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .message {
-      background-color: var(--secondary-color);
-      border-left: 6px solid var(--primary-color);
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.1);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      animation: fadeIn 0.5s ease-out forwards;
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .message:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 25px rgba(255, 0, 0, 0.2);
-    }
-    
-    .message-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .message-id {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-    }
-    
-    .message-date {
-      color: #aaa;
+    .player-info {
+      margin-top: 15px;
       font-size: 0.9rem;
     }
     
-    .message-content {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-    }
-    
-    .message-content p {
+    .player-info p {
       margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
     }
     
-    .message strong {
-      color: var(--primary-color);
-      display: inline-block;
-      min-width: 80px;
+    .player-info span:first-child {
+      color: #aaa;
     }
     
-    .empty-state {
+    .player-info span:last-child {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+    
+    .device-icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+    
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+      transition: all 0.3s;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+    
+    .admin-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 51, 51, 0.8);
+      animation: none;
+    }
+    
+    .password-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--secondary-color);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px var(--primary-color);
+      z-index: 1001;
       text-align: center;
-      padding: 40px;
-      color: #777;
-      font-size: 1.2rem;
-      animation: fadeIn 0.5s ease-out;
+      width: 80%;
+      max-width: 400px;
     }
     
-    /* Effet de particules */
+    .password-popup h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    
+    .password-popup input {
+      display: block;
+      margin: 15px auto;
+      padding: 12px;
+      width: 80%;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Orbitron', sans-serif;
+      background-color: #2a2a2a;
+      color: white;
+    }
+    
+    .password-popup button {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      margin-top: 10px;
+    }
+    
+    .password-error {
+      color: #ff3333;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .admin-controls {
+      display: none;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .add-player-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .add-player-btn:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+    }
+    
+    .action-buttons {
+      display: none;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .modify-btn, .delete-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    
+    .modify-btn {
+      background-color: #2196F3;
+      color: white;
+    }
+    
+    .modify-btn:hover {
+      background-color: #0b7dda;
+    }
+    
+    .delete-btn {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    .delete-btn:hover {
+      background-color: #d32f2f;
+    }
+    
+    .edit-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--secondary-color);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px var(--primary-color);
+      z-index: 1002;
+      text-align: center;
+      width: 80%;
+      max-width: 400px;
+    }
+    
+    .edit-popup h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    
+    .edit-popup label {
+      display: block;
+      margin: 10px 0 5px;
+      text-align: left;
+      color: #aaa;
+    }
+    
+    .edit-popup input, .edit-popup select {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: none;
+      background-color: #2a2a2a;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .edit-popup-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .edit-popup-buttons button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+    }
+    
+    .save-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .cancel-btn {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+    }
+    
     .particle {
       position: absolute;
       background-color: rgba(255, 51, 51, 0.3);
@@ -219,50 +460,192 @@
         opacity: 0;
       }
     }
+
+    /* Style pour le bouton message */
+    .message-btn {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+      transition: all 0.3s;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+
+    .message-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 51, 51, 0.8);
+      animation: none;
+    }
     
-    /* Responsive */
     @media (max-width: 768px) {
-      h1 {
+      header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .players h2 {
         font-size: 2rem;
       }
       
-      .message-content {
-        grid-template-columns: 1fr;
+      .player-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .message-btn {
+        bottom: 180px;
+        right: 20px;
       }
     }
   </style>
 </head>
 <body>
+  <div class="particles" id="particles"></div>
+  
   <header>
-    <h1>XFOR ADMIN PANEL</h1>
-    <p>Gestion des demandes d'adhésion</p>
+    <h1>XFOR TEAM</h1>
   </header>
 
-  <div class="controls">
-    <button class="btn" id="refreshBtn">Actualiser</button>
-    <button class="btn btn-danger" id="clearBtn">Tout supprimer</button>
-    <button class="btn" id="exportBtn">Exporter en JSON</button>
-  </div>
+  <section class="players">
+    <h2>Our Players</h2>
+    
+    <div class="controls">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="PC">PC Players</button>
+      <button class="filter-btn" data-filter="Taliphoun">Mobile Players</button>
+      <button class="filter-btn" data-filter="high-level">High Level (80+)</button>
+    </div>
+    
+    <div class="admin-controls" id="adminControls">
+      <button class="add-player-btn" onclick="openAddPopup()">Add New Player</button>
+    </div>
+    
+    <div class="player-grid" id="playerGrid"></div>
+  </section>
 
-  <div class="message-container" id="messages"></div>
+  <button class="admin-btn" id="adminBtn">A</button>
+  <button class="message-btn" id="messageBtn" onclick="window.location.href='admin.html'">MSG</button>
+  
+  <div class="password-popup" id="passwordPopup">
+    <h2>Admin Authentication</h2>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <button onclick="checkAdminPassword()">Submit</button>
+    <p class="password-error" id="passwordError">Incorrect password!</p>
+  </div>
+  
+  <div class="edit-popup" id="editPopup">
+    <h2 id="popupTitle">Edit Player</h2>
+    <label for="editName">Name:</label>
+    <input type="text" id="editName">
+    
+    <label for="editId">ID:</label>
+    <input type="text" id="editId">
+    
+    <label for="editLevel">Level:</label>
+    <input type="number" id="editLevel">
+    
+    <label for="editDevice">Device:</label>
+    <select id="editDevice">
+      <option value="PC">PC</option>
+      <option value="Taliphoun">Mobile</option>
+    </select>
+    
+    <div class="edit-popup-buttons">
+      <button class="cancel-btn" onclick="closeEditPopup()">Cancel</button>
+      <button class="save-btn" onclick="savePlayerChanges()">Save</button>
+    </div>
+  </div>
+  
+  <div class="overlay" id="overlay"></div>
 
   <script>
-    // Fonction pour créer des particules
+    const ADMIN_PASSWORD = "xforteam21051270";
+    let isAdmin = false;
+    let currentPlayerIndex = -1;
+    let isAddingNewPlayer = false;
+    
+    let players = [
+      { name: "XFOR", id: "247235698", level: 83, device: "PC", profile: "profile_xfor.html" },
+      { name: "RTX", id: "3073363895", level: 62, device: "PC", profile: "profile_rtx.html" },
+      { name: "SPOOLA", id: "18371795", level: 86, device: "Taliphoun", profile: "profile_spoola.html" },
+      { name: "HADOUDI shop", id: "99530327", level: 85, device: "PC" },
+      { name: "SBL", id: "99530327", level: 64, device: "PC" },
+      { name: "JINIX", id: "9410859839", level: 61, device: "Taliphoun" },
+      { name: "ROMEOO", id: "1833330704", level: 67, device: "Taliphoun" },
+      { name: "PANDA", id: "1215503602", level: 69, device: "PC" },
+      { name: "QARTAGI", id: "532792133", level: 70, device: "Taliphoun" },
+      { name: "MO5LES", id: "404084950", level: 85, device: "Taliphoun" },
+      { name: "LOAY", id: "100502676", level: 80, device: "Taliphoun" },
+      { name: "INAYAXAN4SS", id: "113385504", level: 80, device: "Taliphoun" },
+      { name: "ELSO", id: "130492587", level: 78, device: "Taliphoun" },
+      { name: "TOUTA", id: "153241253", level: 68, device: "Taliphoun" },
+      { name: "DOOM", id: "163118061", level: 76, device: "PC" },
+      { name: "BASSEM", id: "165347110", level: 77, device: "PC" },
+      { name: "SHADOW", id: "182738820", level: 76, device: "Taliphoun" },
+      { name: "MOKHTAR", id: "209584090", level: 79, device: "Taliphoun" },
+      { name: "MOTHANA", id: "235092963", level: 72, device: "Taliphoun" },
+      { name: "BNZARTI", id: "423630308", level: 79, device: "Taliphoun" },
+      { name: "SUPRAA", id: "428204569", level: 78, device: "PC" },
+      { name: "RELAX", id: "504147704", level: 74, device: "Taliphoun" },
+      { name: "KIRA", id: "532931316", level: 74, device: "Taliphoun" },
+      { name: "TAKI", id: "548339211", level: 73, device: "PC" },
+      { name: "LWESS", id: "562676378", level: 77, device: "Taliphoun" },
+      { name: "HARBESH", id: "575661228", level: 77, device: "Taliphoun" },
+      { name: "TWIX", id: "584422062", level: 70, device: "Taliphoun" },
+      { name: "HUSHI", id: "644001183", level: 73, device: "Taliphoun" },
+      { name: "HAMZA", id: "646941037", level: 77, device: "Taliphoun" },
+      { name: "SNOOPY", id: "700301778", level: 82, device: "PC" },
+      { name: "9SF", id: "737004094", level: 82, device: "Taliphoun" },
+      { name: "RAMZZY", id: "817658345", level: 82, device: "Taliphoun" },
+      { name: "HELEX", id: "858683674", level: 74, device: "Taliphoun" },
+      { name: "R3DD", id: "897682540", level: 69, device: "PC" },
+      { name: "QUEEN", id: "897930838", level: 83, device: "Taliphoun" },
+      { name: "ITASHI", id: "980980278", level: 73, device: "PC" },
+      { name: "HRX", id: "1043530509", level: 78, device: "PC" },
+      { name: "YONA", id: "1261638873", level: 74, device: "Taliphoun" },
+      { name: "7ARBOUCH", id: "1566013148", level: 79, device: "Taliphoun" },
+      { name: "GANOUCH", id: "1902142283", level: 75, device: "Taliphoun" },
+      { name: "YARA", id: "2349870037", level: 75, device: "Taliphoun" },
+      { name: "TAKI", id: "2889938614", level: 65, device: "PC" },
+      { name: "CHAWIA", id: "2964258330", level: 78, device: "Taliphoun" },
+      { name: "صعيدي", id: "1956092625", level: 84, device: "Taliphoun" },
+      { name: "الزنجي", id: "7117787797", level: 75, device: "Taliphoun" },
+      { name: "معذبكم", id: "647212041", level: 83, device: "Taliphoun" },
+      { name: "موزان", id: "314747841", level: 65, device: "PC" },
+      { name: "اسامة 3kd", id: "335776594", level: 86, device: "PC" },
+      { name: "ملك البيك", id: "396544373", level: 81, device: "Taliphoun" },
+      { name: "سوفي", id: "699893334", level: 77, device: "Taliphoun" },
+      { name: "هلا يا رمانه", id: "1372585796", level: 74, device: "Taliphoun" },
+      { name: "لطشا", id: "1568284555", level: 71, device: "Taliphoun" }
+    ];
+
     function createParticles() {
-      const particleCount = 20;
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 30;
       
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.classList.add('particle');
         
-        // Position aléatoire
         const posX = Math.random() * 100;
         const posY = Math.random() * 100 + 100;
         
-        // Taille aléatoire
         const size = Math.random() * 4 + 1;
         
-        // Durée d'animation aléatoire
         const duration = Math.random() * 15 + 10;
         const delay = Math.random() * 5;
         
@@ -273,82 +656,185 @@
         particle.style.animationDuration = `${duration}s`;
         particle.style.animationDelay = `${delay}s`;
         
-        document.body.appendChild(particle);
+        particlesContainer.appendChild(particle);
       }
     }
     
-    // Fonction pour afficher les messages
-    function displayMessages() {
-      const messages = JSON.parse(localStorage.getItem('xfor_requests')) || [];
-      const container = document.getElementById('messages');
+    function displayPlayers(filter = 'all') {
+      const container = document.getElementById('playerGrid');
       container.innerHTML = '';
       
-      if (messages.length === 0) {
-        container.innerHTML = '<div class="empty-state">Aucune demande pour le moment.</div>';
+      let filteredPlayers = players;
+      
+      if (filter === 'PC') {
+        filteredPlayers = players.filter(p => p.device === 'PC');
+      } else if (filter === 'Taliphoun') {
+        filteredPlayers = players.filter(p => p.device === 'Taliphoun');
+      } else if (filter === 'high-level') {
+        filteredPlayers = players.filter(p => p.level >= 80);
+      }
+      
+      filteredPlayers.forEach((player, index) => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.style.animationDelay = `${index * 0.05}s`;
+        
+        const deviceIcon = player.device === 'PC' ? '💻' : '📱';
+        
+        card.innerHTML = `
+          <a href="${player.profile || '#'}" class="player-name">${player.name}</a>
+          <div class="player-info">
+            <p><span>ID:</span> <span>${player.id}</span></p>
+            <p><span>Level:</span> <span>${player.level}</span></p>
+            <p><span>Device:</span> <span>${player.device} ${deviceIcon}</span></p>
+          </div>
+          <div class="action-buttons">
+            <button class="modify-btn" onclick="openEditPopup(${index})">Edit</button>
+            <button class="delete-btn" onclick="deletePlayer(${index})">Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      
+      document.getElementById('adminControls').style.display = isAdmin ? 'flex' : 'none';
+      
+      const actionButtons = document.querySelectorAll('.action-buttons');
+      actionButtons.forEach(btn => {
+        btn.style.display = isAdmin ? 'flex' : 'none';
+      });
+    }
+    
+    function openPasswordPopup() {
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('passwordPopup').style.display = 'block';
+      document.getElementById('adminPassword').focus();
+    }
+    
+    function closePasswordPopup() {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('passwordPopup').style.display = 'none';
+      document.getElementById('passwordError').style.display = 'none';
+      document.getElementById('adminPassword').value = '';
+    }
+    
+    function checkAdminPassword() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        closePasswordPopup();
+        displayPlayers();
       } else {
-        messages.forEach((msg, index) => {
-          const div = document.createElement('div');
-          div.className = 'message';
-          div.style.animationDelay = `${index * 0.1}s`;
-          
-          // Ajouter la date si elle n'existe pas (pour la rétrocompatibilité)
-          if (!msg.date) {
-            msg.date = new Date().toLocaleString();
-          }
-          
-          div.innerHTML = `
-            <div class="message-header">
-              <span class="message-id">Demande #${index + 1}</span>
-              <span class="message-date">${msg.date}</span>
-            </div>
-            <div class="message-content">
-              <p><strong>Nom:</strong> ${msg.name}</p>
-              <p><strong>ID:</strong> ${msg.id}</p>
-              <p><strong>Level:</strong> ${msg.level}</p>
-              <p><strong>Device:</strong> ${msg.device}</p>
-            </div>
-          `;
-          container.appendChild(div);
-        });
+        document.getElementById('passwordError').style.display = 'block';
       }
     }
     
-    // Fonction pour exporter les données en JSON
-    function exportToJson() {
-      const messages = JSON.parse(localStorage.getItem('xfor_requests')) || [];
-      if (messages.length === 0) {
-        alert("Aucune donnée à exporter !");
+    function openAddPopup() {
+      if (!isAdmin) return;
+      
+      isAddingNewPlayer = true;
+      currentPlayerIndex = -1;
+      
+      document.getElementById('popupTitle').textContent = 'Add New Player';
+      document.getElementById('editName').value = '';
+      document.getElementById('editId').value = '';
+      document.getElementById('editLevel').value = '';
+      document.getElementById('editDevice').value = 'PC';
+      
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('editPopup').style.display = 'block';
+    }
+    
+    function openEditPopup(index) {
+      if (!isAdmin) return;
+      
+      isAddingNewPlayer = false;
+      currentPlayerIndex = index;
+      const player = players[index];
+      
+      document.getElementById('popupTitle').textContent = 'Edit Player';
+      document.getElementById('editName').value = player.name;
+      document.getElementById('editId').value = player.id;
+      document.getElementById('editLevel').value = player.level;
+      document.getElementById('editDevice').value = player.device;
+      
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('editPopup').style.display = 'block';
+    }
+    
+    function closeEditPopup() {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('editPopup').style.display = 'none';
+      currentPlayerIndex = -1;
+      isAddingNewPlayer = false;
+    }
+    
+    function savePlayerChanges() {
+      const name = document.getElementById('editName').value.trim();
+      const id = document.getElementById('editId').value.trim();
+      const level = parseInt(document.getElementById('editLevel').value);
+      const device = document.getElementById('editDevice').value;
+      
+      if (!name || !id || isNaN(level)) {
+        alert('Please fill all fields correctly!');
         return;
       }
       
-      const dataStr = JSON.stringify(messages, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      if (isAddingNewPlayer) {
+        players.push({
+          name,
+          id,
+          level,
+          device,
+          profile: '#'
+        });
+      } else {
+        players[currentPlayerIndex] = {
+          ...players[currentPlayerIndex],
+          name,
+          id,
+          level,
+          device
+        };
+      }
       
-      const exportFileDefaultName = `xfor_requests_${new Date().toISOString().slice(0,10)}.json`;
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
+      closeEditPopup();
+      displayPlayers();
     }
     
-    // Fonction pour supprimer toutes les demandes
-    function clearAllRequests() {
-      if (confirm("Êtes-vous sûr de vouloir supprimer toutes les demandes ? Cette action est irréversible.")) {
-        localStorage.removeItem('xfor_requests');
-        displayMessages();
+    function deletePlayer(index) {
+      if (!isAdmin) return;
+      
+      if (confirm('Are you sure you want to delete this player?')) {
+        players.splice(index, 1);
+        displayPlayers();
       }
     }
     
-    // Initialisation
     document.addEventListener('DOMContentLoaded', () => {
-      displayMessages();
       createParticles();
+      displayPlayers();
       
-      // Écouteurs d'événements
-      document.getElementById('refreshBtn').addEventListener('click', displayMessages);
-      document.getElementById('clearBtn').addEventListener('click', clearAllRequests);
-      document.getElementById('exportBtn').addEventListener('click', exportToJson);
+      document.getElementById('adminBtn').addEventListener('click', openPasswordPopup);
+      
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          displayPlayers(btn.dataset.filter);
+        });
+      });
+      
+      document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          checkAdminPassword();
+        }
+      });
+      
+      document.getElementById('overlay').addEventListener('click', function() {
+        closePasswordPopup();
+        closeEditPopup();
+      });
     });
   </script>
 </body>
